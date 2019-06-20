@@ -152,18 +152,14 @@ BuildScenarios <- function(L){
                               full.names = FALSE)
   ScenarioFiles_ar <- grep(list.files(path = ScenarioInputPath, recursive = TRUE),
                            pattern = "config", value = TRUE, invert = TRUE)
-
+  
   LevelDef_ar <- dirname(ScenarioFiles_ar)
   # if(any(duplicated(LevelDef_ar))){
   #   stop("More than one file exists in the scenario inputs.")
   # }
   LevelDef_ar <- unique(LevelDef_ar)
-
-  # Gather scenario and category config files
-  if (! dir.exists(L$Global$Model$ScenarioOutputFolder) ){
-    dir.create(L$Global$Model$ScenarioOutputFolder)
-  } 
   
+  # Gather scenario and category config files
   if(!dir.exists(file.path(RunDir, L$Global$Model$ScenarioOutputFolder))) { 
     if(file.exists(file.path(RunDir, L$Global$Model$ScenarioOutputFolder))){
       file.remove(file.path(RunDir, L$Global$Model$ScenarioOutputFolder))
@@ -175,7 +171,7 @@ BuildScenarios <- function(L){
               file.path(RunDir, L$Global$Model$ScenarioOutputFolder))
     ScenarioConfig_ls <- fromJSON(file.path(ScenarioInputPath, "scenario_config.json"))
   }
-
+  
   if(file.exists(file.path(ScenarioInputPath,"category_config.json"))){
     file.copy(file.path(ScenarioInputPath, "category_config.json"),
               file.path(RunDir, L$Global$Model$ScenarioOutputFolder))
@@ -186,11 +182,11 @@ BuildScenarios <- function(L){
     # LEVELS is a list of DF of LEVEL NAMES and INPUTS
     # INPUTS is a list of DF of Scenario NAMES and LEVEL
     CategoryLevels_df <- do.call(rbind,
-                                 lapply(CategoryConfig_ls$LEVELS, function(x189) {
-                                   y <- lapply(seq_along(x189$NAME),
+                                 lapply(CategoryConfig_ls$LEVELS, function(x) {
+                                   y <- lapply(seq_along(x$NAME),
                                                function(z) {
-                                                 inputtable <- x189$INPUTS[[z]]
-                                                 inputtable$CATLEVEL <- x189$NAME[[z]]
+                                                 inputtable <- x$INPUTS[[z]]
+                                                 inputtable$CATLEVEL <- x$NAME[[z]]
                                                  return(inputtable)
                                                })
                                    do.call(rbind, y)
@@ -200,20 +196,20 @@ BuildScenarios <- function(L){
     CategoryLevels_df$PATH <- paste0(CategoryLevels_df$NAME,
                                      "/",
                                      CategoryLevels_df$LEVEL)
-
+    
     # Check if all the scenario level inputs exists
     InputsExists_ar <- sapply(CategoryLevels_df$PATH,
-                             function(path) dir.exists(file.path(ScenarioInputPath, path)))
+                              function(path) dir.exists(file.path(ScenarioInputPath, path)))
     if(!all(InputsExists_ar)){
       simpleWarning("Scenario level inputs are missing")
       simpleMessage(paste0("Missing Inputs: ",paste0(names(InputsExists_ar[!InputsExists_ar]),
-                                     collapse = ", ")))
+                                                     collapse = ", ")))
     }
-
+    
     Categories_ls <- lapply(CategoryConfig_ls$LEVELS, function(categories){
       lapply(categories$INPUTS, function(inputlevel){
         sort(apply(inputlevel,1,paste0,collapse="/"))
-        }
+      }
       )
     })
     # Create scenario combinations from categories
@@ -227,15 +223,15 @@ BuildScenarios <- function(L){
     LevelDef_ls <- split(LevelDef_ar, dirname(LevelDef_ar), drop = TRUE)
     ScenarioDef_df <- expand.grid(LevelDef_ls, stringsAsFactors = FALSE)
   }
-
-  ScenarioNames_ar <- apply(ScenarioDef_df, 1, function(x231) {
-    Name <- paste(x231, collapse = "/")
+  
+  ScenarioNames_ar <- apply(ScenarioDef_df, 1, function(x) {
+    Name <- paste(x, collapse = "/")
     gsub("/", "", Name)
   })
   rownames(ScenarioDef_df) <- ScenarioNames_ar
-
-
-
+  
+  
+  
   # Iterate through scenarios and build inputs
   if(dir.exists(file.path(RunDir, L$Global$Model$ScenarioOutputFolder))){
     unlink(file.path(RunDir, L$Global$Model$ScenarioOutputFolder),
@@ -264,22 +260,38 @@ BuildScenarios <- function(L){
     # file.copy(file.path(ScenarioInputPath, "category_config.json"),
     #           file.path(RunDir, L$Global$Model$ScenarioOutputFolder))
     catconfig_ls <- fromJSON(file.path(ScenarioInputPath,"category_config.json"),
-                              simplifyDataFrame = FALSE)
+                             simplifyDataFrame = FALSE)
+    cat_list <- c("Community Design","Marketing/Incentive", "Pricing", "Vehicles/Fuels", "Fuel Price" )
+    cat_names <- sapply( catconfig_ls, function(x) x$NAME  )
+    cat_diff <- setdiff(cat_list,cat_names)   
+    n = length(catconfig_ls)
+    if (length(cat_diff)>0) {
+      for ( i in ( n+1 ): (length(cat_list)) ){
+        LEVELSls= list()
+        INPUTSls= list()
+        INPUTSls[[1]] = list(NAME="A",LEVEL="1")
+        LEVELSls[[1]]= list(NAME= "1", INPUTS=INPUTSls )
+        catconfig_ls[[i]] = list (NAME = cat_diff[i-n], DESCRIPTION= "", LEVELS = LEVELSls)
+      }
+    }
+    
+    
     catconfig_ch <- paste0("var catconfig = ",
-                            toJSON(catconfig_ls, pretty = TRUE), ";")
+                           toJSON(catconfig_ls, pretty = TRUE), ";")
     write(catconfig_ch, file = file.path(RunDir,
                                          L$Global$Model$ScenarioOutputFolder,
                                          "category-cfg.js"))
+
   }
   commonfiles_ar <- file.path(ModelPath, c("defs", "inputs", "run_model.R"))
-
+  
   # Create/Save a file to store the results of scenario builds, runs,
   # and results
   Scenarios_df <- data.frame(Name=ScenarioNames_ar,
                              Build="NA",
                              Run="NA",
                              Results="NA", stringsAsFactors = FALSE)
-
+  
   # cat("Bulding Scenarios\n")
   for (sc_ in ScenarioNames_ar) {
     # cat(paste0(sc_, "\n"))
