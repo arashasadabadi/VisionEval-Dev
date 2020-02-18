@@ -37,10 +37,14 @@ Following are the destination accessibility level definitions:
 The main difference between VE-RSPM models and VE-STATE models is that a number of VE-RSPM inputs are specified at the Bzone leve. The following diagrams show how these two model differes at the early stages.
 VESTATE uses simulation methods to generate land use and housing input in Bzone level.
 
-*** VERSPM
+	*** VERSPM
+
+
 <img align="center" width="600" border=1 src="images/VE-RSPM.png">
 
-*** VESTATE
+	*** VESTATE
+
+
 <img align="center" width="600" border=1 src="images/VE-State.png">
 
  
