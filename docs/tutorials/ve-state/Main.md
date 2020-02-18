@@ -12,16 +12,16 @@ The main difference between VE-RSPM models and VE-STATE models is that VE-STATE 
 Area types are designated based on a combination of activity density and destination accessibility levels. Each is split into 4 levels. Area type is determined by 16 combinations of those levels.
 
 Following are the activity density level definitions:
- . Very Low :  0 to 0.5 household and jobs per acre
- . Low :  0.5 to 5 household and jobs per acre
- . Moderate :  5 to 10 household and jobs per acre
- . High :  more than 10 household and jobs per acre
+ * Very Low :  0 to 0.5 household and jobs per acre
+ * Low :  0.5 to 5 household and jobs per acre
+ * Moderate :  5 to 10 household and jobs per acre
+ * High :  more than 10 household and jobs per acre
  
 Following are the destination accessibility level definitions:
- . Very Low :  0 to 2000 units
- . Low :   2,000 to 10,000 units
- . Moderate :   10,000 to 50,0000 units
- . High :   more than 50,000 units
+ * Very Low :  0 to 2000 units
+ * Low :   2,000 to 10,000 units
+ * Moderate :   10,000 to 50,0000 units
+ * High :   more than 50,000 units
  
  Following table classifies area types by activity density and destination accessibility levels. Rows represent activity density and columns represent destination accessibility levels.
 
