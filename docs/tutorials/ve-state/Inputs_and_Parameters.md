@@ -138,7 +138,7 @@ ___
 Following list are VESTATE specific inputs. Other inputs are in common with VERSPM model.
 
 - **azone_gq_pop-prop_by_area-type.csv** This file provides the proportions for groupquarters in different area types and is used in the [Initialize](Modules_and_Outputs.md/#initialize) module.                    
-- **azone_hh_loc_type_prop.csv** TThis file provides the proportions for households residing in the metropolitan, towns and rural part of the Azone and is used in the [Initialize](Modules_and_Outputs.md/#initialize) module.                    
+- **azone_hh_loc_type_prop.csv** This file provides the proportions for households residing in the metropolitan, towns and rural part of the Azone and is used in the [Initialize](Modules_and_Outputs.md/#initialize) module.                    
 - **azone_loc_type_land_area.csv** This file provides land area data for different area types and is used in [Initialize](Modules_and_Outputs.md/#initialize) module.                  
 - **azone_wkr_loc_type_prop** This file provides the proportions for workers residing in Azone who works in the metropolitan, towns and rural part of the Azone and is used in [Initialize](Modules_and_Outputs.md/#initialize) module.              
 - **marea_congestion_charges.csv** This file is used to specify the charges of vehicle travel for different congestion levels and is optional. The file is used in the [Initialize (VETravelPerformance)](Modules_and_Outputs.md/#initialize-vetravelperformance) and [CalculateRoadPerformance](Modules_and_Outputs.md/#calculateroadperformance) modules.               
@@ -147,7 +147,7 @@ Following list are VESTATE specific inputs. Other inputs are in common with VERS
 - **marea_parking-avail_by_area-type.csv** This file has the data for avereage number of parkings available to households and is used in the [AssignParkingRestrictions](Modules_and_Outputs.md/#assignparkingrestrictions)   
 - **marea_parking-cost_by_area-type.csv** This file has the data related to parking costs and population proportions paying the parking costs and is used in the [AssignParkingRestrictions](Modules_and_Outputs.md/#assignparkingrestrictions) 
 - **marea_travel-demand-mgt_by_area-type.csv** This file has the data for proportions participating in demand management programs and is used in the [AssignDemandManagement](Modules_and_Outputs.md/#assigndemandmanagement) module.                   
-- **marea_uza_profile_names.csv** his file provides the name of a specific urbanized area for the urbanized area profile to use in SimBzone creation and is used in the [Initialize](Modules_and_Outputs.md/#initialize) module.
+- **marea_uza_profile_names.csv** This file provides the name of a specific urbanized area for the urbanized area profile to use in SimBzone creation and is used in the [Initialize](Modules_and_Outputs.md/#initialize) module.
 
 The rest of input files are in common with VERSPM model:
 
