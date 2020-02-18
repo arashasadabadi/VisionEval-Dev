@@ -60,7 +60,7 @@ Land use modeling in VE-RSPM is more complex than in the RSPM. There are two rea
 -  Destination accessibility (i.e. accessibility to jobs and housing) measured consistent as it is used in the multi-modal travel model – This information is one of the 5D measured used in the new RSPM multi-modal travel model. In the RSPM it is calculated from numbers of households and jobs and zone centroid locations. Since synthetic zones won’t have physical locations, it can’t be calculated simply from households and employment by zone
 -  Number of households proportional split of dwelling units between single family and multifamily – Number of households and dwelling unit split by Bzone is needed in order to assign households to Bzones. 
 -  Number of jobs by sector (retail, service, other) is used in calculating several diversity measures used in the RSPM multi-modal travel model. The number of jobs is also used to associate household workers with workplace Bzones
--  Area type and development type – Some practical system of zonal development classification is needed for organizing policy inputs. In VERSPM, 3 development types are used. These are called metropolitan, town, and rural. It is proposed that a classification system merge these development types with the place type system used in RPAT where place types are defined as a combination of area types and development types (see [Area Types in VESTATE](#AreaTypesinVESTATE) ). Policies such as travel demand management policies will be specified by Azone and area type and/or development type. These designations will also be used in the calculation of the design and distance to transit ‘5D’ measure categories that are used in the RSPM multi-modal travel model
+-  Area type and development type – Some practical system of zonal development classification is needed for organizing policy inputs. In VERSPM, 3 development types are used. These are called metropolitan, town, and rural. It is proposed that a classification system merge these development types with the place type system used in RPAT where place types are defined as a combination of area types and development types (see [Area Types in VESTATE](#areatypesinvestate) ). Policies such as travel demand management policies will be specified by Azone and area type and/or development type. These designations will also be used in the calculation of the design and distance to transit ‘5D’ measure categories that are used in the RSPM multi-modal travel model
 
 # Approach for Synthesizing Bzones and their Attributes 
 
@@ -98,7 +98,7 @@ Land use modeling in VE-RSPM is more complex than in the RSPM. There are two rea
 
 15.  The parking pricing, travel demand management, and car service inputs are specified by Azone, area type, and development type. These are then translated to the SimBzone based on the SimBzone area type and development type. After that is done, the AssignDemandManagement, AssignParkingRestrictions, and AssignCarSvcAvailability modules can run as they currently do. Thought will be given as to how to simplify inputs so that users are not required to provide inputs for every combination of Azone, area type and development type.
 
-For more information on simuling Bzones process see [here](https://github.com/VisionEval/VisionEval-Dev/blob/master/sources/modules/VESimLandUse/inst/module_docs/CreateSimBzones.md)
+For more information on simulating Bzones process see [here](https://github.com/VisionEval/VisionEval-Dev/blob/master/sources/modules/VESimLandUse/inst/module_docs/CreateSimBzones.md)
 
 
 ## Sections
