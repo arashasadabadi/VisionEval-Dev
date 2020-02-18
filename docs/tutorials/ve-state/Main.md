@@ -25,9 +25,9 @@ Following are the destination accessibility level definitions:
  
  Following table classifies area types by activity density and destination accessibility levels. Rows represent activity density and columns represent destination accessibility levels.
 
-|       | Very Low         | Low     | Moderate     | High |
-| ----------- | -------------- | ---------- | ---------- |
-| Very Low         | fringe  | fringe         | outer     | outer |
+|       	  | Very Low       | Low        | Moderate   | High |
+| ----------- | -------------- | ---------- | ---------- | ---------- |
+| Very Low    | fringe  | fringe         | outer     | outer |
 | Low  | fringe  | outer         | outer      | inner |
 | Moderate     | outer  | outer         | inner      |inner|
 | High   | outer  | inner         | center      |center|
