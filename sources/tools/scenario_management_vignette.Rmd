@@ -1,7 +1,7 @@
 ---
 title: "Scenario Management Vignette"
 output:
-  html_document: 
+  html_document:
     theme: cosmo
 ---
 
@@ -14,19 +14,14 @@ This file documents the `ve.scenario_management` tools for VisionEval, which all
 A powerful feature of VisionEval is the ability to quickly run 100s or even 1000s of scenarios. Background on running scenarios in VisionEval is available in the [project documentation](https://github.com/VisionEval/VisionEval/wiki/Multiple-Scenarios). Scenarios are defined using a `JSON` file named `scenario_config.json`. In your distribution of VisionEval, you can see an example of this file in the `sources/models/VERPAT_Scenarios/scenario_inputs/` directory. A second `JSON` file, `category_config.json`, defines which of the scenarios a user wants to run. Having this second file allows the user to easily run a subset of the universe of defined scenarios. 
 
 ## Scenario Management Tools Demonstration
-`JSON` files are easily consumed by software, but difficult to edit manually. The scenario management tools provides an alternative to editing the JSON file in the form of a database. 
+`JSON` files are easily consumed by software, but difficult to edit manually. The scenario management tools provide an alternative to editing the JSON file, by allowing you to edit them in the form of a simple database table in CSV (Comma-Separated Values) format. 
 
 Here's how the tools work.
 
-To access the tools you must, let R know where they are. The code below sets the working directory to `VisionEval/sources/`. Please modify the code to point to where you have saved the `VisionEval/sources` folder.
-```{r setup}
-root_dir <- "~/Documents/GitHub/VisionEval-VisionEval-Dev/sources/"
-knitr::opts_knit$set(root.dir = root_dir)
-```
+The tools are loaded automatically as VisionEval helpers, from the tools directory. The following steps presume that you have installed VisionEval and started it (seeing the "Welcome to VisionEval!" message).
 
-We can now load the VisionEval scenario management tools.
-```{r load-tools, message = FALSE}
-source(file.path(root_dir, "tools/scenario_management.R"))
+```{r setup}
+root_dir <- ve.root
 ```
 
 Let's start with the example VERPAT Scenario configuration files that are distributed with VisionEval. The code below tells the software where these files are.   
@@ -44,6 +39,7 @@ Let's bring the newly-created CSV file into R to see what it looks like.
 ```{r view-form}
 example_form_df <- readr::read_csv(example_csv_database_file, 
                                    col_types = readr::cols(.default = readr::col_character()))
+colnames(example_form_df)
 ```
 
 This CSV file can now be edited in Excel, a text editor, R, or any other software. The `scenario_management` tools allow you to build the `JSON` files that VisionEval needs from these CSV files. For example, let's first specify a new directory location for the `JSON` files we'll make and then use the tools to build them:
@@ -54,10 +50,14 @@ ve.scenario_management.make_json_from_form_csv(example_csv_database_file, new_js
 ```
 
 The new `JSON` files can be viewed in a text editor or in R Studio, among other places. We can use R to test that the `JSON` files we've made are the same -- when read by a computer -- as the `JSON` files we started with using R's `identical` method. Note that replacement with `NA` with blanks and the sorting made consistent to align the comparisons.
-```{r check-identical}
-prev_df <- jsonlite::read_json(file.path(example_file_dir, "scenario_config.json"), simplifyVector = TRUE) %>%
+```{r load-magrittr}
+require(magrittr,quietly=TRUE)
+
+prev_df <- jsonlite::read_json(file.path(example_file_dir, "scenario_config.json"),
+    simplifyVector = TRUE) %>%
   dplyr::arrange(NAME)
-new_df <- jsonlite::read_json(file.path(new_json_file_dir, "scenario_config.json"), simplifyVector = TRUE) %>%
+new_df <- jsonlite::read_json(file.path(new_json_file_dir, "scenario_config.json"),
+    simplifyVector = TRUE) %>%
   dplyr::mutate(INSTRUCTIONS = tidyr::replace_na(INSTRUCTIONS, "")) %>%
   dplyr::arrange(NAME)
 
@@ -93,5 +93,9 @@ new_scenario_folders_dir <- file.path(root_dir, "tools/example_dir/")
 ve.scenario_management.make_directory_structure(new_scenario_folders_dir, example_csv_database_file)
 ```
 
+Finally, to rebuild the HTML version of this document from the Rmarkdown (.Rmd), you can simply do this after you start VisionEval:
 
-
+```{r rebuild-html, eval=FALSE}
+setwd(file.path(ve.root,"tools"))
+rmarkdown::render("scenario_management_vignette.Rmd",output_format="html_document")
+```

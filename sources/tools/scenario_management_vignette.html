@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -272,9 +272,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -288,7 +286,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -305,8 +302,6 @@ summary {
 </style>
 
 
-
-<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -352,6 +347,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -364,20 +360,17 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
 
 
 
@@ -399,43 +392,58 @@ $(document).ready(function () {
 </div>
 <div id="scenario-management-tools-demonstration" class="section level2">
 <h2>Scenario Management Tools Demonstration</h2>
-<p><code>JSON</code> files are easily consumed by software, but difficult to edit manually. The scenario management tools provides an alternative to editing the JSON file in the form of a database.</p>
+<p><code>JSON</code> files are easily consumed by software, but difficult to edit manually. The scenario management tools provide an alternative to editing the JSON file, by allowing you to edit them in the form of a simple database table in CSV (Comma-Separated Values) format.</p>
 <p>Here’s how the tools work.</p>
-<p>To access the tools you must, let R know where they are. The code below sets the working directory to <code>VisionEval/sources/</code>. Please modify the code to point to where you have saved the <code>VisionEval/sources</code> folder.</p>
-<pre class="r"><code>knitr::opts_knit$set(root.dir = &quot;~/Documents/GitHub/VisionEval-Dev/sources/&quot;)</code></pre>
-<p>We can now load the VisionEval scenario management tools.</p>
-<pre class="r"><code>source(&quot;tools/scenario_management.R&quot;)</code></pre>
+<p>The tools are loaded automatically as VisionEval helpers, from the tools directory. The following steps presume that you have installed VisionEval and started it (seeing the “Welcome to VisionEval!” message).</p>
+<pre class="r"><code>root_dir &lt;- ve.root</code></pre>
 <p>Let’s start with the example VERPAT Scenario configuration files that are distributed with VisionEval. The code below tells the software where these files are.</p>
-<pre class="r"><code>example_file_dir &lt;- &quot;models/VERPAT_Scenarios/scenario_inputs/&quot;</code></pre>
+<pre class="r"><code>example_file_dir &lt;- file.path(root_dir, &quot;models/VERSPM_Scenarios/scenario_inputs/&quot;)</code></pre>
 <p>We can build a Standard VisionEval scenario management CSV database from the <code>JSON</code> files located in this directory using the example files distributed with VisionEval. You can name the CSV database anything you like and store it any place you like.</p>
-<pre class="r"><code>example_csv_database_file &lt;- &quot;tools/example_scenario_manage.csv&quot;
+<pre class="r"><code>example_csv_database_file &lt;- file.path(root_dir,&quot;tools/example_verspm_scenario_manage.csv&quot;)
 ve.scenario_management.make_form_csv_from_json(example_file_dir, example_csv_database_file)</code></pre>
 <p>Let’s bring the newly-created CSV file into R to see what it looks like.</p>
-<pre class="r"><code>example_form_df &lt;- read_csv(example_csv_database_file)</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   category_name = col_character(),
-##   category_label = col_character(),
-##   category_description = col_character(),
-##   category_instructions = col_character(),
-##   level_name = col_double(),
-##   level_label = col_character(),
-##   level_description = col_character(),
-##   execute = col_logical()
-## )</code></pre>
+<pre class="r"><code>example_form_df &lt;- readr::read_csv(example_csv_database_file, 
+                                   col_types = readr::cols(.default = readr::col_character()))
+colnames(example_form_df)</code></pre>
+<pre><code>##  [1] &quot;strategy_label&quot;        &quot;strategy_description&quot;  &quot;strategy_level&quot;        &quot;category_name&quot;         &quot;category_label&quot;       
+##  [6] &quot;category_description&quot;  &quot;category_instructions&quot; &quot;policy_name&quot;           &quot;policy_label&quot;          &quot;policy_description&quot;</code></pre>
 <p>This CSV file can now be edited in Excel, a text editor, R, or any other software. The <code>scenario_management</code> tools allow you to build the <code>JSON</code> files that VisionEval needs from these CSV files. For example, let’s first specify a new directory location for the <code>JSON</code> files we’ll make and then use the tools to build them:</p>
-<pre class="r"><code>new_json_file_dir &lt;- &quot;tools/example_dir/&quot;
-dir.create(new_json_file_dir)
+<pre class="r"><code>new_json_file_dir &lt;- file.path(root_dir, &quot;tools/example_dir/&quot;)
+if (!dir.exists(new_json_file_dir)) dir.create(new_json_file_dir)
 ve.scenario_management.make_json_from_form_csv(example_csv_database_file, new_json_file_dir)</code></pre>
-<p>The new <code>JSON</code> files can be viewed in a text editor or in R Studio, among other places. We can use R to test that the <code>JSON</code> files we’ve made are the same – when read by a computer – as the <code>JSON</code> files we started with using R’s <code>identical</code> method, like this:</p>
-<pre class="r"><code>identical(read_json(file.path(example_file_dir, &quot;scenario_config.json&quot;)), 
-          read_json(file.path(new_json_file_dir, &quot;scenario_config.json&quot;)))</code></pre>
+<p>The new <code>JSON</code> files can be viewed in a text editor or in R Studio, among other places. We can use R to test that the <code>JSON</code> files we’ve made are the same – when read by a computer – as the <code>JSON</code> files we started with using R’s <code>identical</code> method. Note that replacement with <code>NA</code> with blanks and the sorting made consistent to align the comparisons.</p>
+<pre class="r"><code>require(magrittr,quietly=TRUE)
+
+prev_df &lt;- jsonlite::read_json(file.path(example_file_dir, &quot;scenario_config.json&quot;),
+    simplifyVector = TRUE) %&gt;%
+  dplyr::arrange(NAME)
+new_df &lt;- jsonlite::read_json(file.path(new_json_file_dir, &quot;scenario_config.json&quot;),
+    simplifyVector = TRUE) %&gt;%
+  dplyr::mutate(INSTRUCTIONS = tidyr::replace_na(INSTRUCTIONS, &quot;&quot;)) %&gt;%
+  dplyr::arrange(NAME)
+
+identical(prev_df, new_df)</code></pre>
 <pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>identical(read_json(file.path(example_file_dir, &quot;category_config.json&quot;)), 
-          read_json(file.path(new_json_file_dir, &quot;category_config.json&quot;)))</code></pre>
+<pre class="r"><code>identical(jsonlite::read_json(file.path(example_file_dir, &quot;category_config.json&quot;)), 
+          jsonlite::read_json(file.path(new_json_file_dir, &quot;category_config.json&quot;)))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>As a test, we can repeat these steps for the <code>VERPAT</code> scenarios that are distributed with VisionEval, as follows:</p>
+<pre class="r"><code>example_file_dir &lt;- file.path(root_dir, &quot;models/VERPAT_Scenarios/scenario_inputs/&quot;)
+example_csv_database_file &lt;- file.path(root_dir,&quot;tools/example_verpat_scenario_manage.csv&quot;)
+
+ve.scenario_management.make_form_csv_from_json(example_file_dir, example_csv_database_file)
+
+new_json_file_dir &lt;- file.path(root_dir, &quot;tools/example_dir/&quot;)
+ve.scenario_management.make_json_from_form_csv(example_csv_database_file, new_json_file_dir)
+
+identical(jsonlite::read_json(file.path(example_file_dir, &quot;scenario_config.json&quot;)), 
+          jsonlite::read_json(file.path(new_json_file_dir, &quot;scenario_config.json&quot;)))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>identical(jsonlite::read_json(file.path(example_file_dir, &quot;category_config.json&quot;)), 
+          jsonlite::read_json(file.path(new_json_file_dir, &quot;category_config.json&quot;)))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <p>Another tedious requirement of the <code>VEScenario</code> package is that it requires input files to be stored in a specific, nested directory structure. Making this directory structure by hand is tedious and error-prone. The scenario management tools now do this for you, like this:</p>
-<pre class="r"><code>new_scenario_folders_dir &lt;- &quot;tools/example_dir/&quot;
+<pre class="r"><code>new_scenario_folders_dir &lt;- file.path(root_dir, &quot;tools/example_dir/&quot;)
 ve.scenario_management.make_directory_structure(new_scenario_folders_dir, example_csv_database_file)</code></pre>
 </div>
 
@@ -456,6 +464,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
