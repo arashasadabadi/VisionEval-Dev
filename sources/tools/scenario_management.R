@@ -3,6 +3,8 @@ requireNamespace("magrittr")
 requireNamespace("readr")
 requireNamespace("jsonlite")
 
+library(magrittr)
+
 tool.contents <- c(
   "ve.scenario_management.make_form_csv_from_json",
   "ve.scenario_management.make_json_from_form_csv",
